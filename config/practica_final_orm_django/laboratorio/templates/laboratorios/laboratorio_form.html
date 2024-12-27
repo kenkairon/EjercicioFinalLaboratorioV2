@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles2.css' %}">
+    <title>{% if form.instance.pk %}Editar Laboratorio{% else %}Crear Laboratorio{% endif %}</title>
+</head>
+
+<body>
+    <h1>{% if form.instance.pk %}Editar Laboratorio{% else %}Crear Laboratorio{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+        <a href="{% url 'laboratorio_list' %}">Cancelar</a>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+<h1>¿Está seguro de que desea eliminar este laboratorio?</h1>
+<p><strong>Nombre:</strong> {{ laboratorio.nombre }}</p>
+<p><strong>Ciudad:</strong> {{ laboratorio.ciudad }}</p>
+<p><strong>País:</strong> {{ laboratorio.pais }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Eliminar</button>
+    <a href="{% url 'laboratorio_list' %}">Cancelar</a>
+</form>
