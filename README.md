@@ -328,7 +328,18 @@ agregue por medio de la interfaz administrativa, los siguientes Productos:
                     'class': 'form-control',
                 }),
             }
+        def clean_nombre(self):
+            nombre = self.cleaned_data['nombre']
+            qs = Laboratorio.objects.filter(nombre=nombre)
 
+            # Excluir la instancia actual en caso de edición
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+
+            if qs.exists():
+                raise forms.ValidationError("Este laboratorio ya existe en la base de datos.")
+
+            return nombre
 
 34. Creamos las vistas laboratorio/views.py
     ```bash
@@ -437,40 +448,55 @@ agregue por medio de la interfaz administrativa, los siguientes Productos:
         <title>Lista de Laboratorios</title>
     </head>
 
-    <h1>Información de Laboratorios</h1>
-    <a href="{% url 'laboratorio_create' %}" class="action-link">Crear Nuevo Laboratorio</a>
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Ciudad</th>
-                <th>País</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for laboratorio in laboratorios %}
-            <tr>
-                <td>{{ laboratorio.nombre }}</td>
-                <td>{{ laboratorio.ciudad }}</td>
-                <td>{{ laboratorio.pais }}</td>
-                <td><a href="{% url 'laboratorio_update' laboratorio.pk %}" class="action-link">Actualizar</a></td>
-                <td><a href="{% url 'laboratorio_delete' laboratorio.pk %}" class="action-link delete">Eliminar</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <body>
+        <h1>Información de Laboratorios</h1>
+        <a href="{% url 'laboratorio_create' %}" class="action-link">Crear Nuevo Laboratorio</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Ciudad</th>
+                    <th>País</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for laboratorio in page_obj %}
+                <tr>
+                    <td>{{ laboratorio.nombre }}</td>
+                    <td>{{ laboratorio.ciudad }}</td>
+                    <td>{{ laboratorio.pais }}</td>
+                    <td><a href="{% url 'laboratorio_update' laboratorio.pk %}" class="action-link">Actualizar</a></td>
+                    <td><a href="{% url 'laboratorio_delete' laboratorio.pk %}" class="action-link delete">Eliminar</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <div class="footer">
-        <p>¿Información de los Laboratorios?</p>
-        <a href="#">Ir a la página de inicio</a>
-        <p>Usted ha visitado esta página {{ visitas }} veces.</p>
-    </div>
+        <!-- Controles de paginación -->
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page=1">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            <p>¿Información de los Laboratorios?</p>
+            <a href="#">Ir a la página de inicio</a>
+            <p>Usted ha visitado esta página {{ visitas }} veces.</p>
+        </div>
     </body>
 
     </html>
-
 38. Creamos los templates/laboratorio_form.html
     ```bash
     {% load static %}
