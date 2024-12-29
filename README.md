@@ -335,6 +335,9 @@ agregue por medio de la interfaz administrativa, los siguientes Productos:
     from django.shortcuts import render, get_object_or_404, redirect
     from .models import Laboratorio
     from .forms import LaboratorioForm
+    from django.core.paginator import Paginator
+    from django.db.models import IntegerField
+    from django.db.models.functions import Cast, Substr
 
     # 1. Listar laboratorios
     def laboratorio_list(request):
