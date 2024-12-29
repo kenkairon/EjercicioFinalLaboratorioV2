@@ -9,9 +9,8 @@ def laboratorio_list(request):
     # Obtener el contador de visitas de las cookies del usuario
     visitas = int(request.COOKIES.get('visitas', 0)) + 1
 
-    # Obtener la lista de laboratorios desde el modelo (suponiendo que ya tienes este modelo configurado)
-    from .models import Laboratorio
-    laboratorios = Laboratorio.objects.all()
+    # Obtener la lista de laboratorios desde el modelo y ordenarlos por el campo deseado   
+    laboratorios = Laboratorio.objects.all().order_by('nombre')  # Cambia 'nombre' por el campo deseado
 
     # Renderizar la página y pasar el contador como contexto
     response = render(request, 'laboratorios/laboratorio_list.html', {'laboratorios': laboratorios, 'visitas': visitas})
@@ -20,6 +19,7 @@ def laboratorio_list(request):
     response.set_cookie('visitas', visitas, max_age=60*60*24*30)  # 30 días de duración
     
     return response
+
 
 # 2. Crear un nuevo laboratorio
 def laboratorio_create(request):
