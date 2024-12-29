@@ -341,15 +341,25 @@ agregue por medio de la interfaz administrativa, los siguientes Productos:
         # Obtener el contador de visitas de las cookies del usuario
         visitas = int(request.COOKIES.get('visitas', 0)) + 1
 
-        # Obtener la lista de laboratorios desde el modelo y ordenarlos por el campo deseado   
-        laboratorios = Laboratorio.objects.all().order_by('nombre')  # Cambia 'nombre' por el campo deseado
+        # Anotar el número extraído y ordenar por este valor
+        laboratorios = Laboratorio.objects.annotate(
+            numero=Cast(Substr('nombre', 12), IntegerField())
+        ).order_by('numero')
 
-        # Renderizar la página y pasar el contador como contexto
-        response = render(request, 'laboratorios/laboratorio_list.html', {'laboratorios': laboratorios, 'visitas': visitas})
-        
+        # Implementar paginación (10 elementos por página)
+        paginator = Paginator(laboratorios, 5)
+        page_number = request.GET.get('page')  # Obtener el número de página desde la URL
+        page_obj = paginator.get_page(page_number)
+
+        # Renderizar la página
+        response = render(request, 'laboratorios/laboratorio_list.html', {
+            'page_obj': page_obj,
+            'visitas': visitas,
+        })
+
         # Configurar la cookie de visitas
         response.set_cookie('visitas', visitas, max_age=60*60*24*30)  # 30 días de duración
-        
+
         return response
 
     # 2. Crear un nuevo laboratorio
