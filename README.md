@@ -501,3 +501,7 @@ agregue por medio de la interfaz administrativa, los siguientes Productos:
         <button type="submit">Eliminar</button>
         <a href="{% url 'laboratorio_list' %}">Cancelar</a>
     </form>
+
+41. Vamos a la página principal http://127.0.0.1:8000/ podemos crear, actualizar y eliminar datos
+    ```bash
+    python manage.py runserver 
