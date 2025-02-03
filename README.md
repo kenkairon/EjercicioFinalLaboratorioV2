@@ -164,13 +164,31 @@ Educativo y de Aprendizaje Personal
     y
 18. config/practica_final_orm_django/laboratorio/admin.py
     ```bash
-    from django.contrib import admin
-    from .models import Laboratorio, DirectorGeneral, Producto
+    x|from django.contrib import admin
+    from .models import DirectorGeneral, Laboratorio,Producto
 
-    # Register your models here.
-    admin.site.register(Laboratorio)
-    admin.site.register(DirectorGeneral)
-    admin.site.register(Producto)
+    @admin.register(DirectorGeneral)
+    class DirectorGeneralAdmin(admin.ModelAdmin):
+        list_display = ('id', 'nombre', 'laboratorio')  # Muestra columnas en la lista
+        list_filter = ('laboratorio',)  # Filtro por laboratorio
+        search_fields = ('nombre', 'laboratorio__nombre')  # Búsqueda por nombre y laboratorio
+        ordering = ('id',)  # Ordenar por ID
+        list_per_page = 10  # Paginación
+
+    @admin.register(Laboratorio)
+    class LaboratorioAdmin(admin.ModelAdmin):
+        list_display = ('id', 'nombre')
+        search_fields = ('nombre', 'ciudad')
+        ordering = ('id',)  # Ordenar por ID
+
+    @admin.register(Producto)
+    class ProductoAdmin(admin.ModelAdmin):
+        list_display = ('id', 'nombre', 'laboratorio', 'f_fabricacion', 'p_costo', 'p_venta')
+        list_filter = ('laboratorio', 'f_fabricacion')  # Filtros por laboratorio y fecha
+        search_fields = ('nombre', 'laboratorio__nombre')  # Búsqueda por nombre y laboratorio
+        ordering = ('id',)  # Ordenar por ID
+        list_editable = ('p_costo', 'p_venta')  # Permite editar precio en la lista
+        list_per_page = 10  # Paginación
 
 19. Nos Vamos a la pagina 127.0.0.1:8000/admin
     ```bash
@@ -541,6 +559,7 @@ agregue por medio de la interfaz administrativa, los siguientes Productos:
         <a href="{% url 'laboratorio_list' %}">Cancelar</a>
     </form>
 
-41. Vamos a la página principal http://127.0.0.1:8000/ podemos crear, actualizar y eliminar datos
+
+42. Vamos a la página principal http://127.0.0.1:8000/ podemos crear, actualizar y eliminar datos
     ```bash
     python manage.py runserver 

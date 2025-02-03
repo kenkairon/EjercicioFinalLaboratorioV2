@@ -1,0 +1,29 @@
+python manage.py shell
+
+from laboratorio.models import Laboratorio, DirectorGeneral, Producto  
+
+laboratorios = Laboratorio.objects.all()
+directores = DirectorGeneral.objects.all()
+productos = Producto.objects.all()
+
+print(laboratorios)  
+print(directores)    
+print(productos)   
+
+producto = Producto.objects.filter(nombre="Producto1").first()
+if producto:
+    print(producto.laboratorio)
+else:
+    print("No se encontró el producto")
+
+
+productos_ordenados = Producto.objects.order_by('nombre').values('nombre', 'laboratorio')
+
+for producto in productos_ordenados:
+    print(producto)
+
+
+productos = Producto.objects.all()
+
+for producto in productos:
+    print(f"Producto: {producto.nombre} - Laboratorio: {producto.laboratorio.nombre}")

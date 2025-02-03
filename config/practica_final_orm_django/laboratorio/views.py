@@ -66,3 +66,4 @@ def laboratorio_delete(request, pk):
         laboratorio.delete()
         return redirect('laboratorio_list')
     return render(request, 'laboratorios/laboratorio_confirm_delete.html', {'laboratorio': laboratorio})
+
