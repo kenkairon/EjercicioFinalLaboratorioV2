@@ -164,7 +164,7 @@ Educativo y de Aprendizaje Personal
     y
 18. config/practica_final_orm_django/laboratorio/admin.py
     ```bash
-    x|from django.contrib import admin
+    from django.contrib import admin
     from .models import DirectorGeneral, Laboratorio,Producto
 
     @admin.register(DirectorGeneral)
