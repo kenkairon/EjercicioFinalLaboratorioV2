@@ -2,31 +2,29 @@ from django.test import TestCase
 from django.urls import reverse
 from .models import Laboratorio
 
-class LaboratorioTests(TestCase):
+class LaboratorioTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Crear datos iniciales para pruebas
-        cls.laboratorio = Laboratorio.objects.create(
-            nombre='Laboratorio de Prueba',
-            ciudad='Ciudad de Prueba',
-            pais='País de Prueba'
-        )
+        # Crear un laboratorio de prueba en la base de datos
+        cls.laboratorio = Laboratorio.objects.create(nombre="Laboratorio 001")
 
-    # 1. Verificar datos en la base de datos simulada
-    def test_modelo_laboratorio(self):
-        lab = Laboratorio.objects.get(id=self.laboratorio.id)
-        self.assertEqual(lab.nombre, 'Laboratorio de Prueba')
-        self.assertEqual(lab.ciudad, 'Ciudad de Prueba')
-        self.assertEqual(lab.pais, 'País de Prueba')
+    def test_laboratorio_data(self):
+        """Verifica que los datos creados en setUpTestData coincidan en la BD."""
+        laboratorio = Laboratorio.objects.get(id=self.laboratorio.id)
+        self.assertEqual(laboratorio.nombre, "Laboratorio 001")
 
-    # 2. Verificar respuesta HTTP 200 para URL de detalle
-    def test_url_detalle_status_code(self):
-        response = self.client.get(f'/laboratorios/{self.laboratorio.pk}/')
+    def test_laboratorio_list_url(self):
+        """Verifica que la URL de listar laboratorios devuelve HTTP 200."""
+        response = self.client.get(reverse('laboratorio_list'))
         self.assertEqual(response.status_code, 200)
 
-    # 3. Verificar vista usando reverse, template y contenido
-    def test_vista_detalle(self):
-        response = self.client.get(reverse('laboratorios', args=[self.laboratorio.pk]))
+    def test_laboratorio_detail_url(self):
+        """Verifica que la URL de detalle de laboratorio devuelve HTTP 200."""
+        response = self.client.get(reverse('laboratorio_detail', args=[self.laboratorio.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'laboratorio/laboratorio_detail.html')
-        self.assertContains(response, self.laboratorio.nombre)
+
+    def test_laboratorio_list_template(self):
+        """Verifica que se use la plantilla correcta y el contenido esperado en la lista de laboratorios."""
+        response = self.client.get(reverse('laboratorio_list'))
+        self.assertTemplateUsed(response, 'laboratorios/laboratorio_list.html')
+        self.assertContains(response, "Laboratorio 001")
